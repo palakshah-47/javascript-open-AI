@@ -33,7 +33,6 @@ To resolve this issue:
 6. In terminal, type `q` to stop the Vite dev server.
 
 
-
 ### Instructor
 
 Morten Rand-Hendriksen 
