@@ -1,76 +1,78 @@
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
 
-const PromptToLocation = (prompt) => {
-  const url = "https://api.openai.com/v1/chat/completions";
+const PromptToLocation = (prompt, units) => {
+  const url = `https://api.openweathermap.org/data/2.5/weather?q=${prompt}&APPID=${
+    import.meta.env.VITE_OPENAI
+  }&units=${units}`;
 
-  const data = {
-    model: "gpt-3.5-turbo-0613",
-    messages: [{ role: "user", content: prompt }],
-    functions: [
-      {
-        name: "displayData",
-        description: "Get the current weather in a given location.",
-        parameters: {
-          type: "object",
-          properties: {
-            country: {
-              type: "string",
-              description: "Country name.",
-            },
-            countryCode: {
-              type: "string",
-              description: "Country code. Use ISO-3166",
-            },
-            USstate: {
-              type: "string",
-              description: "Full state name.",
-            },
-            state: {
-              type: "string",
-              description: "Two-letter state code.",
-            },
-            city: {
-              type: "string",
-              description: "City name.",
-            },
-            unit: {
-              type: "string",
-              description: "location unit: metric or imperial.",
-            },
-          },
-          required: [
-            "countryCode",
-            "country",
-            "USstate",
-            "state",
-            "city",
-            "unit",
-          ],
-        },
-      },
-    ],
-    function_call: "auto",
-  };
+  // const data = {
+  //   model: "gpt-3.5-turbo-0613",
+  //   messages: [{ role: "user", content: prompt }],
+  //   functions: [
+  //     {
+  //       name: "displayData",
+  //       description: "Get the current weather in a given location.",
+  //       parameters: {
+  //         type: "object",
+  //         properties: {
+  //           country: {
+  //             type: "string",
+  //             description: "Country name.",
+  //           },
+  //           countryCode: {
+  //             type: "string",
+  //             description: "Country code. Use ISO-3166",
+  //           },
+  //           USstate: {
+  //             type: "string",
+  //             description: "Full state name.",
+  //           },
+  //           state: {
+  //             type: "string",
+  //             description: "Two-letter state code.",
+  //           },
+  //           city: {
+  //             type: "string",
+  //             description: "City name.",
+  //           },
+  //           unit: {
+  //             type: "string",
+  //             description: "location unit: metric or imperial.",
+  //           },
+  //         },
+  //         required: [
+  //           "countryCode",
+  //           "country",
+  //           "USstate",
+  //           "state",
+  //           "city",
+  //           "unit",
+  //         ],
+  //       },
+  //     },
+  //   ],
+  //   function_call: "auto",
+  // };
 
-  const params = {
-    headers: {
-      Authorization: `Bearer ${import.meta.env.VITE_OPENAI}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-    method: "POST",
-  };
+  // const params = {
+  //   headers: {
+  //     Authorization: `Bearer ${import.meta.env.VITE_OPENAI}`,
+  //     "Content-Type": "application/json",
+  //   },
+  //   body: JSON.stringify(data),
+  //   method: "POST",
+  // };
 
-  return fetch(url, params)
+  return fetch(url)
     .then((response) => response.json())
     .then((data) => {
-      const promptRes = JSON.parse(
-        data.choices[0].message.function_call.arguments
-      );
-      console.log(promptRes);
+      // const promptRes = JSON.parse(
+      //   data.choices[0].message.function_call.arguments
+      // );
+      console.log(JSON.parse(data));
 
       const locationString = () => {
-        if (promptRes.countryCode === "US") {
+        if (promptRes.countryCode === 'US') {
           return `${promptRes.city},${promptRes.state},${promptRes.country}`;
         } else {
           return `${promptRes.city},${promptRes.country}`;
@@ -81,15 +83,15 @@ const PromptToLocation = (prompt) => {
         locationString: locationString(),
         units: promptRes.unit,
         country: promptRes.country,
-        USstate: promptRes.USstate
-      }
+        USstate: promptRes.USstate,
+      };
 
       return promptData;
     })
     .catch((error) => {
-      console.log("Error:", error);
+      console.log('Error:', error);
       return Promise.reject(
-        "Unable to identify a location from your question. Please try again."
+        'Unable to identify a location from your question. Please try again.'
       );
     });
 };
@@ -99,3 +101,4 @@ PromptToLocation.propTypes = {
 };
 
 export default PromptToLocation;
+

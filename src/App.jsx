@@ -1,20 +1,19 @@
-import { useEffect, useState } from "react";
-import "./App.css";
-import useApiRequests from "./components/useApiRequests";
-import WeatherForm from "./components/WeatherForm";
-import WeatherCard from "./components/WeatherCard";
-import Description from "./components/Description";
+import { useEffect, useState } from 'react';
+import './App.css';
+import useApiRequests from './components/useApiRequests';
+import WeatherForm from './components/WeatherForm';
+import WeatherCard from './components/WeatherCard';
+import Description from './components/Description';
 
 function App() {
-  const [prompt, setPrompt] = useState("");
-  const [units, setUnits] = useState("metric");
+  const [prompt, setPrompt] = useState('');
+  const [units, setUnits] = useState('metric');
   const [weatherDataLoading, setWeatherDataLoading] = useState(false);
-  const [weatherDescriptLoading, setWeatherDescriptLoading] = useState(false);
-  const [errorMsg, setErrorMsg] = useState("");
+  // const [weatherDescriptLoading, setWeatherDescriptLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   // Custom hook to handle API requests. Fires when prompt changes.
-  const { error, promptData, locationData, weatherData, weatherDescription } =
-    useApiRequests(prompt);
+  const { error, locationData, weatherData } = useApiRequests(prompt, units);
 
   // Set error message if error is returned from API request.
   useEffect(() => {
@@ -28,26 +27,27 @@ function App() {
   useEffect(() => {
     if (weatherData) {
       setWeatherDataLoading(false);
+      setErrorMsg('');
     }
   }, [weatherData]);
 
-  useEffect(() => {
-    if (weatherDescription) {
-      setWeatherDescriptLoading(false);
-    }
-  }, [weatherDescription]);
+  // useEffect(() => {
+  //   if (weatherDescription) {
+  //     setWeatherDescriptLoading(false);
+  //   }
+  // }, [weatherDescription]);
 
-  useEffect(() => {
-    if (promptData && promptData.units) {
-      setUnits(promptData.units);
-    }
-  }, [promptData]);
+  // useEffect(() => {
+  //   if (promptData && promptData.units) {
+  //     setUnits(promptData.units);
+  //   }
+  // }, [promptData]);
 
   // Handle form submission. Set prompt to user input.
   const handleSubmit = (newPrompt) => {
-    setErrorMsg("");
+    setErrorMsg('');
     setWeatherDataLoading(true);
-    setWeatherDescriptLoading(true);
+    // setWeatherDescriptLoading(true);
     setPrompt(newPrompt);
   };
 
@@ -57,13 +57,14 @@ function App() {
         <h1 className="page-title">Current Weather</h1>
         <WeatherForm onSubmit={handleSubmit} />
         {error && <p className="error">{errorMsg.message}</p>}
-        {weatherDescription ? (
+        {!weatherDataLoading && weatherData.name && !errorMsg && (
           <Description
-            isLoading={weatherDescriptLoading}
-            weatherDescription={weatherDescription}
+            isLoading={weatherDataLoading}
+            weatherDescription="Got Weather Data"
           />
-        ) : (
-          <Description isLoading={weatherDescriptLoading} />
+        )}
+        {weatherDataLoading && !weatherData && (
+          <Description isLoading={weatherDataLoading} />
         )}
       </header>
       <main className="main-content">
@@ -72,7 +73,7 @@ function App() {
             isLoading={weatherDataLoading}
             data={weatherData}
             units={units}
-            country={promptData.country}
+            country={locationData[0].country}
             USstate={locationData[0].state}
             setUnits={setUnits}
           />
@@ -85,3 +86,4 @@ function App() {
 }
 
 export default App;
+

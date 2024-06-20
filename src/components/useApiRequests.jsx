@@ -1,16 +1,16 @@
-import { useState, useEffect } from "react";
-import PropTypes from "prop-types";
-import LocationToCoordinates from "./LocationToCoordinates";
-import WeatherData from "./WeatherData";
-import PromptToLocation from "./PromptToLocation";
-import WeatherDescript from "./WeahterDescript";
+import { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import LocationToCoordinates from './LocationToCoordinates';
+import WeatherData from './WeatherData';
+import PromptToLocation from './PromptToLocation';
+import WeatherDescript from './WeahterDescript';
 
-const useApiRequests = (prompt) => {
+const useApiRequests = (prompt, units) => {
   const [error, setError] = useState(null);
-  const [promptData, setPromptData] = useState({});
+  // const [promptData, setPromptData] = useState({});
   const [locationData, setLocationData] = useState([]);
   const [weatherData, setWeatherData] = useState({});
-  const [weatherDescription, setWeatherDescription] = useState(null);
+  // const [weatherDescription, setWeatherDescription] = useState(null);
 
   // Fetch location and weather data from API.
   useEffect(() => {
@@ -18,32 +18,30 @@ const useApiRequests = (prompt) => {
       if (!prompt) return; // return if prompt is null or undefined
 
       try {
-        const promptDataRes = await PromptToLocation(prompt);
-        setPromptData(promptDataRes);
+        // const promptDataRes = await PromptToLocation(prompt, units);
+        // setPromptData(promptDataRes);
 
-        const locationDataRes = await LocationToCoordinates(
-          promptDataRes.locationString
-        );
+        const locationDataRes = await LocationToCoordinates(prompt);
         setLocationData(locationDataRes);
 
         const weatherDataRes = await WeatherData(locationDataRes);
         setWeatherData(weatherDataRes);
 
-        const weatherDescriptRes = await WeatherDescript(
-          prompt,
-          weatherDataRes
-        );
-        setWeatherDescription(weatherDescriptRes);
+        // const weatherDescriptRes = await WeatherDescript(
+        //   prompt,
+        //   weatherDataRes
+        // );
+        // setWeatherDescription(weatherDescriptRes);
       } catch (error) {
         setError(error);
-        console.error("Error:", error);
+        console.error('Error:', error);
       }
     };
 
     fetchData();
   }, [prompt]); // run effect when `prompt` changes
 
-  return { error, promptData, locationData, weatherData, weatherDescription };
+  return { error, locationData, weatherData };
 };
 
 useApiRequests.propTypes = {
@@ -51,3 +49,4 @@ useApiRequests.propTypes = {
 };
 
 export default useApiRequests;
+
