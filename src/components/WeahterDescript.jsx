@@ -1,7 +1,7 @@
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
 
 const WeatherDescript = (prompt, weatherData) => {
-  const url = "https://api.openai.com/v1/chat/completions";
+  const url = 'https://api.openai.com/v1/chat/completions';
 
   const sysMsg = `In a conversational professional tone, answer the [Question] based on the [Weather Data]. 
 
@@ -15,32 +15,30 @@ const WeatherDescript = (prompt, weatherData) => {
   )}`;
 
   const data = {
-    model: "gpt-4-0613",
+    model: 'gpt-4-turbo',
     messages: [
-      { role: "system", content: sysMsg },
-      { role: "user", content: newPrompt },
+      { role: 'system', content: sysMsg },
+      { role: 'user', content: newPrompt },
     ],
   };
 
   const params = {
     headers: {
       Authorization: `Bearer ${import.meta.env.VITE_OPENAI}`,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify(data),
-    method: "POST",
+    method: 'POST',
   };
 
   return fetch(url, params)
     .then((response) => response.json())
-    .then((data) => {
-      return data.choices[0].message.content
+    .then((data) => {     
+      return data.choices[0].message.content;
     })
     .catch((error) => {
-      console.log("Error:", error);
-      return Promise.reject(
-        "Unable to fetch weather description."
-      );
+      console.log('Error:', error);
+      return Promise.reject('Unable to fetch weather description.');
     });
 };
 
@@ -49,3 +47,4 @@ WeatherDescript.propTypes = {
 };
 
 export default WeatherDescript;
+

@@ -9,11 +9,12 @@ function App() {
   const [prompt, setPrompt] = useState('');
   const [units, setUnits] = useState('metric');
   const [weatherDataLoading, setWeatherDataLoading] = useState(false);
-  // const [weatherDescriptLoading, setWeatherDescriptLoading] = useState(false);
+  const [weatherDescriptLoading, setWeatherDescriptLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
   // Custom hook to handle API requests. Fires when prompt changes.
-  const { error, locationData, weatherData } = useApiRequests(prompt, units);
+  const { error, promptData, locationData, weatherData, weatherDescription } =
+    useApiRequests(prompt, units);
 
   // Set error message if error is returned from API request.
   useEffect(() => {
@@ -31,23 +32,23 @@ function App() {
     }
   }, [weatherData]);
 
-  // useEffect(() => {
-  //   if (weatherDescription) {
-  //     setWeatherDescriptLoading(false);
-  //   }
-  // }, [weatherDescription]);
+  useEffect(() => {
+    if (weatherDescription) {
+      setWeatherDescriptLoading(false);
+    }
+  }, [weatherDescription]);
 
-  // useEffect(() => {
-  //   if (promptData && promptData.units) {
-  //     setUnits(promptData.units);
-  //   }
-  // }, [promptData]);
+  useEffect(() => {
+    if (promptData && promptData.units) {
+      setUnits(promptData.units);
+    }
+  }, [promptData]);
 
   // Handle form submission. Set prompt to user input.
   const handleSubmit = (newPrompt) => {
     setErrorMsg('');
     setWeatherDataLoading(true);
-    // setWeatherDescriptLoading(true);
+    setWeatherDescriptLoading(true);
     setPrompt(newPrompt);
   };
 
@@ -57,14 +58,13 @@ function App() {
         <h1 className="page-title">Current Weather</h1>
         <WeatherForm onSubmit={handleSubmit} />
         {error && <p className="error">{errorMsg.message}</p>}
-        {!weatherDataLoading && weatherData.name && !errorMsg && (
+        {weatherDescription ? (
           <Description
-            isLoading={weatherDataLoading}
-            weatherDescription="Got Weather Data"
+            isLoading={weatherDescriptLoading}
+            weatherDescription={weatherDescription}
           />
-        )}
-        {weatherDataLoading && !weatherData && (
-          <Description isLoading={weatherDataLoading} />
+        ) : (
+          <Description isLoading={weatherDescriptLoading} />
         )}
       </header>
       <main className="main-content">
@@ -73,7 +73,7 @@ function App() {
             isLoading={weatherDataLoading}
             data={weatherData}
             units={units}
-            country={locationData[0].country}
+            country={promptData.country}
             USstate={locationData[0].state}
             setUnits={setUnits}
           />
@@ -86,4 +86,5 @@ function App() {
 }
 
 export default App;
+
 

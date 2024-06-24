@@ -7,10 +7,10 @@ import WeatherDescript from './WeahterDescript';
 
 const useApiRequests = (prompt, units) => {
   const [error, setError] = useState(null);
-  // const [promptData, setPromptData] = useState({});
+  const [promptData, setPromptData] = useState({});
   const [locationData, setLocationData] = useState([]);
   const [weatherData, setWeatherData] = useState({});
-  // const [weatherDescription, setWeatherDescription] = useState(null);
+  const [weatherDescription, setWeatherDescription] = useState(null);
 
   // Fetch location and weather data from API.
   useEffect(() => {
@@ -18,20 +18,22 @@ const useApiRequests = (prompt, units) => {
       if (!prompt) return; // return if prompt is null or undefined
 
       try {
-        // const promptDataRes = await PromptToLocation(prompt, units);
-        // setPromptData(promptDataRes);
+        const promptDataRes = await PromptToLocation(prompt, units);
+        setPromptData(promptDataRes);
 
-        const locationDataRes = await LocationToCoordinates(prompt);
+        const locationDataRes = await LocationToCoordinates(
+          promptDataRes.locationString
+        );
         setLocationData(locationDataRes);
 
         const weatherDataRes = await WeatherData(locationDataRes);
         setWeatherData(weatherDataRes);
 
-        // const weatherDescriptRes = await WeatherDescript(
-        //   prompt,
-        //   weatherDataRes
-        // );
-        // setWeatherDescription(weatherDescriptRes);
+        const weatherDescriptRes = await WeatherDescript(
+          prompt,
+          weatherDataRes
+        );
+        setWeatherDescription(weatherDescriptRes);
       } catch (error) {
         setError(error);
         console.error('Error:', error);
@@ -41,7 +43,7 @@ const useApiRequests = (prompt, units) => {
     fetchData();
   }, [prompt]); // run effect when `prompt` changes
 
-  return { error, locationData, weatherData };
+  return { error, promptData, locationData, weatherData, weatherDescription };
 };
 
 useApiRequests.propTypes = {
