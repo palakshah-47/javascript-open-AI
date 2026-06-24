@@ -1,39 +1,13 @@
 import PropTypes from 'prop-types';
 
 const WeatherDescript = (prompt, weatherData) => {
-  const url = 'https://api.openai.com/v1/chat/completions';
-
-  const sysMsg = `In a conversational professional tone, answer the [Question] based on the [Weather Data]. 
-
-- Provide an opinion about what the weather feels like. 
-- Provide temperature in either Celsius or Fahrenheit, whichever is more appropriate. 
-- Never display the temperature in Kelvin. 
-- Provide a recommendation on how to prepare and what to wear (e.g. bring an umbrella, wear a wind breaker, a warm jacket, etc.)`;
-
-  const newPrompt = `Question: ${prompt}. Weather Data: ${JSON.stringify(
-    weatherData
-  )}`;
-
-  const data = {
-    model: 'gpt-4-turbo',
-    messages: [
-      { role: 'system', content: sysMsg },
-      { role: 'user', content: newPrompt },
-    ],
-  };
-
-  const params = {
-    headers: {
-      Authorization: `Bearer ${import.meta.env.VITE_OPENAI}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
+  return fetch('/api/weather-description', {
     method: 'POST',
-  };
-
-  return fetch(url, params)
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prompt, weatherData }),
+  })
     .then((response) => response.json())
-    .then((data) => {     
+    .then((data) => {
       return data.choices[0].message.content;
     })
     .catch((error) => {
