@@ -4,52 +4,45 @@ const PromptToLocation = (prompt) => {
   const url = "https://api.openai.com/v1/chat/completions";
 
   const data = {
-    model: "gpt-3.5-turbo-0613",
-    messages: [{ role: "user", content: prompt }],
-    functions: [
-      {
-        name: "displayData",
-        description: "Get the current weather in a given location.",
-        parameters: {
-          type: "object",
-          properties: {
-            country: {
-              type: "string",
-              description: "Country name.",
-            },
-            countryCode: {
-              type: "string",
-              description: "Country code. Use ISO-3166",
-            },
-            USstate: {
-              type: "string",
-              description: "Full state name.",
-            },
-            state: {
-              type: "string",
-              description: "Two-letter state code.",
-            },
-            city: {
-              type: "string",
-              description: "City name.",
-            },
-            unit: {
-              type: "string",
-              description: "location unit: metric or imperial.",
-            },
-          },
-          required: [
-            "countryCode",
-            "country",
-            "USstate",
-            "state",
-            "city",
-            "unit",
-          ],
-        },
-      },
-    ],
-    function_call: "auto",
+		model: 'gpt-4o-mini',
+		messages: [{ role: 'user', content: prompt }],
+		functions: [
+			{
+				name: 'displayData',
+				description: 'Get the current weather in a given location.',
+				parameters: {
+					type: 'object',
+					properties: {
+						country: {
+							type: 'string',
+							description: 'Country name.',
+						},
+						countryCode: {
+							type: 'string',
+							description: 'Country code. Use ISO-3166',
+						},
+						USstate: {
+							type: 'string',
+							description: 'Full state name.',
+						},
+						state: {
+							type: 'string',
+							description: 'Two-letter state code.',
+						},
+						city: {
+							type: 'string',
+							description: 'City name.',
+						},
+						unit: {
+							type: 'string',
+							description: 'location unit: metric or imperial.',
+						},
+					},
+					required: ['countryCode', 'country', 'USstate', 'state', 'city', 'unit'],
+				},
+			},
+		],
+		function_call: 'auto',
   };
 
   const params = {
@@ -99,3 +92,4 @@ PromptToLocation.propTypes = {
 };
 
 export default PromptToLocation;
+
