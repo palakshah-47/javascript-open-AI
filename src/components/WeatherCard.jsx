@@ -2,27 +2,20 @@ import PropTypes from 'prop-types';
 import './WeatherCard.css';
 import Loader from './Loader';
 
-// Translate temperature from the unit returned by the weather API.
+// Translate temperature from the API value to the selected display unit.
 const tempTranslator = (temp, unit) => {
 	const normalizedTemp = Number(temp);
 
-	if (unit === 'metric') {
-		return {
-			value: normalizedTemp,
-			unit: '°C',
-		};
-	}
-
 	if (unit === 'imperial') {
 		return {
-			value: normalizedTemp,
+			value: (normalizedTemp * 9) / 5 + 32,
 			unit: '°F',
 		};
 	}
 
 	return {
 		value: normalizedTemp,
-		unit: '°K',
+		unit: '°C',
 	};
 };
 
